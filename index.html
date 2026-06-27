@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafraViva — Inteligência viva para a sua lavoura</title>
+<meta name="description" content="SafraViva: diagnóstico de doenças por foto, monitoramento financeiro com alerta antecipado e conexão com consultores — tudo em um só aplicativo para o produtor rural.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+============================================================ */
+:root {
+  --display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --body: 'Hanken Grotesk', system-ui, sans-serif;
+  --bg: #F4EDDD; --bg-2: #EDE3CC;
+  --surface: #FFFCF5; --surface-2: #FBF5E8; --surface-3: #F3EAD6;
+  --ink: #241B10; --ink-2: #5C4A33; --muted: #8C7C62; --faint: #B3A488;
+  --line: #E4D8BF; --line-2: #D8C9A9;
+  --green: #2E5A38; --green-deep: #1E3D26; --green-soft: #69A24A; --green-tint: #E7EEDD;
+  --terra: #C8761F; --terra-deep: #A35710; --terra-tint: #F6E7D2;
+  --gold: #E0A23C;
+  --danger: #BE4A2E; --danger-tint: #F6E0D7;
+  --info: #3C6E8C; --info-tint: #E0EEF5;
+  --on-green: #FBF5E8; --on-terra: #FFFFFF;
+  --maxw: 1180px; --r: 14px; --r-sm: 10px; --r-lg: 18px; --r-xl: 26px;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --sh-sm: 0 1px 3px rgba(50,30,8,.07), 0 3px 10px -3px rgba(50,30,8,.10);
+  --sh: 0 2px 4px rgba(50,30,8,.05), 0 14px 32px -14px rgba(50,30,8,.22);
+  --sh-lg: 0 4px 8px rgba(50,30,8,.06), 0 28px 56px -24px rgba(40,25,8,.32);
+}
+
+/* ============================================================
+   RESET & BASE
+============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--body); background: var(--bg); color: var(--ink);
+  line-height: 1.55; font-size: 16px; letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; text-decoration: none; }
+ul, ol { list-style: none; }
+h1,h2,h3,h4 { font-family: var(--display); font-weight: 700; line-height: 1.04; letter-spacing: -0.03em; text-wrap: balance; }
+p { text-wrap: pretty; }
+
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: .022;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* ============================================================
+   LAYOUT & COMPONENTS
+============================================================ */
+.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 28px; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-weight: 600; font-size: 15px; border-radius: 100px; padding: 12px 22px;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), background .2s;
+  white-space: nowrap; letter-spacing: -0.01em; cursor: pointer;
+}
+.btn:active { transform: translateY(1px) scale(.99); }
+.btn-primary { background: var(--green); color: var(--on-green); box-shadow: var(--sh-sm); }
+.btn-primary:hover { background: var(--green-deep); transform: translateY(-2px); box-shadow: var(--sh); }
+.btn-terra { background: var(--terra); color: var(--on-terra); box-shadow: var(--sh-sm); }
+.btn-terra:hover { background: var(--terra-deep); transform: translateY(-2px); box-shadow: var(--sh); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line-2); }
+.btn-ghost:hover { border-color: var(--ink-2); background: var(--surface-2); }
+.btn-lg { padding: 15px 28px; font-size: 16.5px; }
+.btn-sm { padding: 9px 16px; font-size: 13.5px; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--sh-sm); }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; padding: 5px 11px;
+  border-radius: 100px; background: var(--surface-3); color: var(--ink-2); border: 1px solid var(--line);
+}
+
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+/* ============================================================
+   NAV
+============================================================ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  border-bottom: 1px solid transparent;
+  transition: background .3s var(--ease), border-color .3s, backdrop-filter .3s;
+}
+.nav.solid {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(14px) saturate(1.4);
+  border-bottom-color: var(--line);
+}
+.nav-inner { height: 66px; display: flex; align-items: center; gap: 14px; }
+.nav-logo { display: flex; align-items: center; gap: 9px; margin-right: auto; }
+.nav-logo-mark {
+  width: 34px; height: 34px; background: var(--green); border-radius: 9px;
+  display: grid; place-items: center; flex-shrink: 0;
+}
+.nav-logo-text { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: -0.03em; }
+.nav-logo-text span { color: var(--terra); }
+.nav-links { display: flex; gap: 2px; }
+.nav-links a {
+  padding: 8px 13px; font-size: 14.5px; font-weight: 500; color: var(--ink-2);
+  border-radius: 100px; transition: color .2s, background .2s;
+}
+.nav-links a:hover { color: var(--ink); background: var(--surface-3); }
+.nav-burger { display: none; padding: 8px; }
+.nav-mobile { display: none; flex-direction: column; gap: 4px; padding: 0 28px 16px; border-top: 1px solid var(--line); }
+.nav-mobile.open { display: flex; }
+.nav-mobile a { padding: 12px 8px; font-weight: 600; border-bottom: 1px solid var(--line); }
+.nav-mobile .btn { margin-top: 10px; justify-content: center; }
+
+/* ============================================================
+   HERO
+============================================================ */
+.hero { position: relative; padding-top: 118px; padding-bottom: 72px; overflow: hidden; }
+.hero-deco {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+}
+.hero-deco::before {
+  content: ""; position: absolute; top: -100px; right: -120px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb,var(--terra) 18%,transparent), transparent 65%);
+}
+.hero-deco::after {
+  content: ""; position: absolute; bottom: -100px; left: -80px;
+  width: 440px; height: 440px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb,var(--green) 15%,transparent), transparent 65%);
+}
+.hero-grid {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 44px; align-items: center;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 12.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: var(--terra-deep); margin-bottom: 20px;
+}
+.hero-badge-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--terra);
+  animation: bdpulse 2s ease-in-out infinite;
+}
+@keyframes bdpulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.55;transform:scale(.8)} }
+
+.hero h1 {
+  font-size: clamp(36px, 5.4vw, 62px);
+  letter-spacing: -0.038em; line-height: .99; margin-bottom: 22px;
+}
+.hero h1 .hl { color: var(--terra); position: relative; display: inline-block; }
+.hero h1 .hl svg { position: absolute; left: 0; bottom: -8px; width: 100%; overflow: visible; pointer-events: none; }
+
+.hero-sub { font-size: clamp(16px, 1.7vw, 19px); color: var(--ink-2); max-width: 480px; line-height: 1.55; margin-bottom: 30px; }
+.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 38px; }
+.hero-proof { display: flex; gap: 26px; flex-wrap: wrap; }
+.proof-num { font-family: var(--display); font-weight: 700; font-size: 23px; color: var(--green); letter-spacing: -0.03em; }
+.proof-label { font-size: 12px; color: var(--muted); max-width: 110px; line-height: 1.35; }
+
+/* ── Diagnosis card ── */
+.diag-wrap { position: relative; }
+.diag-card {
+  background: var(--surface); border-radius: 22px;
+  box-shadow: var(--sh-lg); overflow: hidden; max-width: 380px; margin: 0 auto;
+}
+.diag-header {
+  padding: 13px 17px; border-bottom: 1px solid var(--line); background: var(--surface-2);
+  display: flex; align-items: center; gap: 10px;
+}
+.diag-hicon {
+  width: 32px; height: 32px; border-radius: 9px; background: var(--green);
+  display: grid; place-items: center; color: var(--on-green); flex-shrink: 0;
+}
+.diag-htitle { font-weight: 700; font-size: 13.5px; font-family: var(--display); letter-spacing: -0.02em; }
+.diag-hsub { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px; margin-top: 1px; }
+.dot-live { width: 6px; height: 6px; border-radius: 50%; background: var(--green-soft); animation: bdpulse 1.6s infinite; }
+
+.diag-leaf {
+  position: relative; height: 172px; overflow: hidden;
+  background: linear-gradient(135deg, var(--green-tint), color-mix(in srgb,var(--green) 10%,var(--bg)));
+  display: flex; align-items: center; justify-content: center;
+}
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(110,200,80,.9), transparent);
+  box-shadow: 0 0 14px 4px rgba(110,200,80,.45);
+  animation: scanDown 2.4s var(--ease) infinite;
+}
+@keyframes scanDown { 0%{top:0%} 50%{top:90%} 100%{top:0%} }
+
+.diag-corner { position: absolute; width: 18px; height: 18px; }
+.diag-corner::before,.diag-corner::after { content:""; position:absolute; background:rgba(255,255,255,.85); border-radius:1px; }
+.dc-tl{top:10px;left:10px} .dc-tl::before{width:2px;height:100%;top:0;left:0} .dc-tl::after{width:100%;height:2px;top:0;left:0}
+.dc-tr{top:10px;right:10px} .dc-tr::before{width:2px;height:100%;top:0;right:0} .dc-tr::after{width:100%;height:2px;top:0;right:0}
+.dc-bl{bottom:10px;left:10px} .dc-bl::before{width:2px;height:100%;bottom:0;left:0} .dc-bl::after{width:100%;height:2px;bottom:0;left:0}
+.dc-br{bottom:10px;right:10px} .dc-br::before{width:2px;height:100%;bottom:0;right:0} .dc-br::after{width:100%;height:2px;bottom:0;right:0}
+
+.diag-hint {
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.42); color: #fff; font-size: 11px; font-weight: 600;
+  padding: 4px 12px; border-radius: 100px; white-space: nowrap; backdrop-filter: blur(4px);
+}
+
+.diag-body { padding: 15px 17px; display: flex; flex-direction: column; gap: 9px; }
+
+.diag-scanning {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 13px; background: var(--surface-3); border-radius: var(--r);
+  font-size: 13.5px; color: var(--ink-2);
+}
+.spinner {
+  width: 16px; height: 16px; border: 2px solid var(--line-2);
+  border-top-color: var(--green); border-radius: 50%; flex-shrink: 0;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.diag-disease {
+  display: flex; gap: 10px; align-items: flex-start; padding: 12px 13px;
+  background: var(--danger-tint); border-radius: var(--r);
+  border: 1px solid color-mix(in srgb,var(--danger) 22%,transparent);
+}
+.diag-disease-icon {
+  width: 36px; height: 36px; border-radius: 10px; background: var(--danger);
+  color: #fff; display: grid; place-items: center; flex-shrink: 0;
+}
+.diag-disease-name { font-weight: 700; font-size: 14px; color: var(--danger); }
+.diag-disease-sub { font-size: 11.5px; color: var(--ink-2); margin-top: 2px; }
+.diag-badge {
+  margin-left: auto; padding: 3px 9px; border-radius: 100px;
+  background: var(--danger); color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+
+.diag-explain {
+  padding: 10px 12px; background: var(--surface-2); border-radius: var(--r-sm);
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.5; border: 1px solid var(--line);
+}
+.diag-region {
+  padding: 9px 12px; background: var(--green-tint); border-radius: var(--r-sm);
+  font-size: 12.5px; color: var(--ink-2); display: flex; gap: 7px; align-items: flex-start;
+  border: 1px solid color-mix(in srgb,var(--green) 20%,transparent);
+}
+.diag-consult {
+  padding: 10px 12px; background: var(--info-tint); border-radius: var(--r-sm);
+  font-size: 12px; font-weight: 600; color: var(--info);
+  border: 1px solid color-mix(in srgb,var(--info) 25%,transparent);
+  display: flex; gap: 7px; align-items: flex-start;
+}
+.diag-action {
+  display: flex; gap: 8px; padding-top: 2px;
+}
+.diag-action button {
+  flex: 1; padding: 10px; border-radius: var(--r-sm);
+  font-size: 13px; font-weight: 600; transition: background .2s;
+}
+.diag-btn-primary { background: var(--green); color: var(--on-green); }
+.diag-btn-primary:hover { background: var(--green-deep); }
+.diag-btn-ghost { background: transparent; border: 1.5px solid var(--line-2); color: var(--muted); }
+.diag-btn-ghost:hover { background: var(--surface-3); color: var(--ink); }
+
+/* floating chips */
+.float-chip {
+  position: absolute; background: var(--surface); border: 1px solid var(--line);
+  border-radius: 13px; padding: 9px 12px; box-shadow: var(--sh-lg);
+  display: flex; align-items: center; gap: 8px;
+}
+.float-chip:nth-child(2) { top: 52px; left: -44px; animation: floaty 5s ease-in-out infinite; }
+.float-chip:nth-child(3) { bottom: 72px; right: -40px; animation: floaty 5.6s ease-in-out .6s infinite; }
+@keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-9px)} }
+.chip-icon { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; flex-shrink: 0; }
+.chip-label { font-size: 11.5px; font-weight: 700; }
+.chip-sub { font-size: 10.5px; color: var(--muted); }
+
+/* ============================================================
+   PROBLEM
+============================================================ */
+.problem { background: var(--green-deep); padding: 72px 0; position: relative; overflow: hidden; }
+.problem::after {
+  content: ""; position: absolute; bottom: -80px; right: -80px;
+  width: 340px; height: 340px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb,var(--terra) 18%,transparent), transparent 65%);
+  pointer-events: none;
+}
+.problem-head { max-width: 640px; margin-bottom: 44px; position: relative; z-index: 1; }
+.prob-kicker { font-size: 12.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; display: block; }
+.problem-head h2 { font-size: clamp(26px,3.8vw,44px); color: var(--on-green); line-height: 1.06; }
+.problem-head p { font-size: 17px; color: color-mix(in srgb,var(--on-green) 72%,transparent); margin-top: 14px; max-width: 520px; line-height: 1.55; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 16px; position: relative; z-index: 1; }
+.stat-card { padding: 20px 18px; background: color-mix(in srgb,var(--on-green) 7%,transparent); border: 1px solid color-mix(in srgb,var(--on-green) 12%,transparent); border-radius: var(--r-lg); }
+.stat-val { font-family: var(--display); font-weight: 800; font-size: clamp(28px,4vw,40px); color: var(--gold); letter-spacing: -0.04em; }
+.stat-lbl { font-size: 13.5px; color: var(--on-green); margin-top: 7px; line-height: 1.4; font-weight: 500; }
+.stat-src { font-size: 11.5px; color: color-mix(in srgb,var(--on-green) 50%,transparent); margin-top: 5px; }
+
+/* ============================================================
+   COMO FUNCIONA
+============================================================ */
+.how { padding: 80px 0; }
+.section-head { margin-bottom: 48px; }
+.section-head h2 { font-size: clamp(28px,4.2vw,50px); margin-top: 14px; }
+.section-head p { font-size: 18px; color: var(--ink-2); margin-top: 16px; max-width: 600px; line-height: 1.5; }
+.section-head.center { text-align: center; }
+.section-head.center p { margin-left: auto; margin-right: auto; }
+
+.how-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; position: relative; }
+.how-grid::before {
+  content: ""; position: absolute; top: 30px;
+  left: calc(16.67% + 12px); right: calc(16.67% + 12px);
+  height: 1px; background: linear-gradient(90deg,var(--green-soft),var(--gold),var(--terra));
+  opacity: .3;
+}
+.how-step {
+  padding: 26px 22px; background: var(--surface); border-radius: var(--r-lg); border: 1px solid var(--line);
+  display: flex; flex-direction: column;
+}
+.how-icon {
+  width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 18px;
+}
+.how-icon.s1 { background: var(--green-tint); }
+.how-icon.s2 { background: var(--terra-tint); }
+.how-icon.s3 { background: var(--info-tint); }
+.how-step h3 { font-size: 19px; letter-spacing: -0.025em; margin-bottom: 10px; }
+.how-step p { font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+
+/* ============================================================
+   IA DIAGNÓSTICO
+============================================================ */
+.ia-section { padding: 80px 0; background: var(--bg-2); }
+.ia-flow {
+  display: grid; grid-template-columns: repeat(5,1fr);
+  gap: 0; margin-bottom: 44px; position: relative; align-items: start;
+}
+.ia-flow::before {
+  content: ""; position: absolute; top: 27px; left: calc(10% + 4px); right: calc(10% + 4px);
+  height: 1px; background: repeating-linear-gradient(90deg,var(--line-2) 0,var(--line-2) 6px,transparent 6px,transparent 12px);
+}
+.ia-step { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 8px; position: relative; }
+.ia-icon {
+  width: 54px; height: 54px; border-radius: 15px; display: grid; place-items: center;
+  margin-bottom: 14px; position: relative; z-index: 1;
+}
+.ia-step h4 { font-size: 14px; letter-spacing: -0.02em; margin-bottom: 6px; }
+.ia-step p { font-size: 12.5px; color: var(--ink-2); line-height: 1.4; }
+
+.ia-step.s1 .ia-icon { background: var(--green-tint); }
+.ia-step.s2 .ia-icon { background: var(--terra-tint); }
+.ia-step.s3 .ia-icon { background: color-mix(in srgb,var(--gold) 18%,var(--surface)); }
+.ia-step.s4 .ia-icon { background: var(--green-tint); }
+.ia-step.s5 .ia-icon { background: var(--info-tint); border: 2px solid color-mix(in srgb,var(--info) 30%,transparent); }
+
+.ia-disclaimer {
+  padding: 28px 32px;
+  background: var(--surface);
+  border-radius: var(--r-xl);
+  border: 2px solid color-mix(in srgb,var(--info) 30%,transparent);
+  display: flex; gap: 22px; align-items: flex-start;
+  box-shadow: var(--sh-sm);
+}
+.ia-disclaimer-icon {
+  width: 52px; height: 52px; flex-shrink: 0; border-radius: 14px;
+  background: var(--info-tint); display: grid; place-items: center;
+}
+.ia-disclaimer h3 { font-size: 17px; letter-spacing: -0.025em; color: var(--info); margin-bottom: 8px; }
+.ia-disclaimer p { font-size: 15px; color: var(--ink-2); line-height: 1.6; }
+.ia-disclaimer strong { color: var(--ink); }
+
+/* ============================================================
+   MÓDULOS
+============================================================ */
+.modules { padding: 80px 0; }
+.modules-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(285px,1fr)); gap: 18px; }
+.mod-card {
+  padding: 24px; background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); position: relative; overflow: hidden;
+  transition: transform .3s var(--ease), box-shadow .3s var(--ease);
+}
+.mod-card:hover { transform: translateY(-4px); box-shadow: var(--sh); }
+.mod-deco {
+  position: absolute; top: -24px; right: -24px; width: 100px; height: 100px;
+  border-radius: 50%; opacity: .5; pointer-events: none;
+}
+.mod-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; position: relative; }
+.mod-icon { width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center; box-shadow: var(--sh-sm); }
+.mod-tag { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+.mod-card h3 { font-size: 20px; letter-spacing: -0.025em; margin-bottom: 9px; }
+.mod-card > p { font-size: 13.5px; color: var(--ink-2); line-height: 1.5; margin-bottom: 14px; }
+.mod-bullets { display: flex; flex-direction: column; gap: 7px; }
+.mod-bullet { display: flex; gap: 8px; font-size: 12.5px; color: var(--ink-2); line-height: 1.4; }
+.bullet-check { flex-shrink: 0; margin-top: 2px; }
+
+.mod-cta-tile {
+  padding: 28px; background: var(--green); border-radius: var(--r-lg);
+  display: flex; flex-direction: column; justify-content: center; box-shadow: var(--sh);
+}
+.mod-cta-tile h3 { font-size: 22px; color: var(--on-green); letter-spacing: -0.03em; margin-top: 14px; margin-bottom: 10px; }
+.mod-cta-tile p { font-size: 14px; color: color-mix(in srgb,var(--on-green) 80%,transparent); line-height: 1.5; margin-bottom: 20px; }
+
+/* ============================================================
+   COMPARATIVO
+============================================================ */
+.compare { padding: 80px 0; background: var(--bg-2); }
+.compare-table-wrap { overflow-x: auto; }
+.compare-table { width: 100%; border-collapse: collapse; min-width: 580px; }
+.compare-table th { padding: 16px 20px; font-size: 13.5px; font-weight: 700; border-bottom: 2px solid var(--line); }
+.compare-table th:first-child { text-align: left; color: var(--muted); position: sticky; left: 0; background: var(--surface-2); }
+.compare-table th.us { color: var(--green); font-family: var(--display); font-size: 15px; background: var(--green-tint); }
+.compare-table td { padding: 12px 20px; border-top: 1px solid var(--line); font-size: 13.5px; text-align: center; }
+.compare-table td:first-child { text-align: left; font-weight: 500; color: var(--ink); position: sticky; left: 0; }
+.compare-table tr:nth-child(odd) td:first-child { background: var(--surface); }
+.compare-table tr:nth-child(even) td:first-child { background: var(--surface-2); }
+.compare-table td.us-col { background: color-mix(in srgb,var(--green) 5%,transparent); }
+.sym-yes { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--green); }
+.sym-partial { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--gold); }
+.sym-no { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--surface-3); }
+.compare-legend { display: flex; gap: 18px; justify-content: center; margin-top: 16px; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.compare-legend span { display: flex; align-items: center; gap: 7px; }
+
+/* ============================================================
+   TRAÇÃO
+============================================================ */
+.traction { padding: 80px 0; background: var(--green-deep); position: relative; overflow: hidden; }
+.traction::before {
+  content: ""; position: absolute; top: -60px; left: -80px;
+  width: 360px; height: 360px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb,var(--terra) 16%,transparent), transparent 65%);
+  pointer-events: none;
+}
+.traction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: center; position: relative; z-index: 1; }
+.traction .prob-kicker { color: var(--gold); }
+.traction h2 { font-size: clamp(28px,4vw,46px); color: var(--on-green); margin-top: 14px; line-height: 1.06; }
+.traction > .wrap > .traction-grid > div > p {
+  font-size: 16px; color: color-mix(in srgb,var(--on-green) 72%,transparent); margin-top: 16px; max-width: 420px; line-height: 1.55;
+}
+.traction-nums { display: flex; gap: 28px; margin-top: 32px; flex-wrap: wrap; }
+.traction-num .n { font-family: var(--display); font-weight: 700; font-size: 28px; color: var(--gold); letter-spacing: -0.03em; white-space: nowrap; }
+.traction-num .l { font-size: 12px; color: color-mix(in srgb,var(--on-green) 62%,transparent); max-width: 100px; line-height: 1.35; margin-top: 2px; }
+
+.bar-chart-card {
+  padding: 26px; border-radius: var(--r-lg);
+  background: color-mix(in srgb,var(--on-green) 6%,transparent);
+  border: 1px solid color-mix(in srgb,var(--on-green) 13%,transparent);
+}
+.bar-chart-label { font-size: 13px; font-weight: 600; color: color-mix(in srgb,var(--on-green) 65%,transparent); margin-bottom: 22px; }
+.bar-chart { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; height: 190px; }
+.bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; height: 100%; justify-content: flex-end; }
+.bar-rec { font-size: 12px; font-weight: 700; color: var(--on-green); text-align: center; }
+.bar-fill { width: 100%; max-width: 46px; border-radius: 7px 7px 0 0; transform-origin: bottom; animation: growUp 1s var(--ease) both; }
+@keyframes growUp { from{transform:scaleY(0)} to{transform:scaleY(1)} }
+.bar-year { font-size: 12px; font-weight: 600; color: color-mix(in srgb,var(--on-green) 65%,transparent); }
+.bar-clients { font-size: 10.5px; color: color-mix(in srgb,var(--on-green) 45%,transparent); }
+
+/* ============================================================
+   CTA SECTION
+============================================================ */
+.cta-section { padding: 88px 0; }
+.cta-card {
+  position: relative; overflow: hidden; padding: clamp(34px,6vw,70px);
+  text-align: center; background: var(--surface); border-radius: var(--r-xl);
+  border: 1px solid var(--line); box-shadow: var(--sh-lg);
+}
+.cta-card::before {
+  content: ""; position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+  width: 380px; height: 380px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in srgb,var(--terra) 14%,transparent), transparent 65%);
+}
+.cta-card > * { position: relative; z-index: 1; }
+.cta-card h2 { font-size: clamp(26px,4.2vw,46px); letter-spacing: -0.035em; margin-top: 18px; margin-bottom: 18px; }
+.cta-card p { font-size: 17px; color: var(--ink-2); max-width: 500px; margin: 0 auto 28px; line-height: 1.55; }
+.cta-btns { display: flex; gap: 13px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+.cta-trust { display: flex; gap: 20px; justify-content: center; font-size: 13px; color: var(--muted); flex-wrap: wrap; }
+.cta-trust span { display: flex; align-items: center; gap: 6px; }
+
+/* ============================================================
+   FOOTER
+============================================================ */
+footer { background: var(--green-deep); color: var(--on-green); padding: 54px 0 28px; }
+.foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 34px; margin-bottom: 38px; }
+.foot-brand p { font-size: 13.5px; color: color-mix(in srgb,var(--on-green) 62%,transparent); margin-top: 13px; max-width: 240px; line-height: 1.5; }
+.foot-col-title { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+.foot-col ul { display: flex; flex-direction: column; gap: 9px; }
+.foot-col a { font-size: 13.5px; color: color-mix(in srgb,var(--on-green) 70%,transparent); transition: color .2s; }
+.foot-col a:hover { color: var(--on-green); }
+.foot-bottom {
+  padding-top: 22px; border-top: 1px solid color-mix(in srgb,var(--on-green) 13%,transparent);
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+  font-size: 12.5px; color: color-mix(in srgb,var(--on-green) 50%,transparent);
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+
+/* ── Tablet largo (≤1100px) ── */
+@media (max-width: 1100px) {
+  .foot-grid { grid-template-columns: 1.3fr 1fr 1fr; gap: 28px; }
+  .foot-grid .foot-col:last-child { grid-column: 1 / -1; }
+}
+
+/* ── Tablet (≤980px) ── */
+@media (max-width: 980px) {
+  /* Nav */
+  .nav-links, .nav-ctas { display: none !important; }
+  .nav-burger { display: inline-flex !important; }
+
+  /* Hero: título primeiro, card depois */
+  .hero { padding-top: 100px; padding-bottom: 52px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 38px; }
+  .hero-copy { order: 1; }
+  .hero-visual { order: 2; }
+  .hero-sub { max-width: 100%; }
+  .float-chip { display: none !important; }
+  .diag-card { max-width: 480px; margin: 0 auto; }
+
+  /* Seções */
+  .problem { padding: 60px 0; }
+  .how { padding: 64px 0; }
+  .ia-section { padding: 64px 0; }
+  .modules { padding: 64px 0; }
+  .compare { padding: 64px 0; }
+  .traction { padding: 64px 0; }
+  .cta-section { padding: 64px 0; }
+
+  /* Fluxo IA: 3 colunas */
+  .ia-flow { grid-template-columns: repeat(3, 1fr); row-gap: 28px; }
+  .ia-flow::before { display: none; }
+
+  /* Tração */
+  .traction-grid { grid-template-columns: 1fr; gap: 36px; }
+  .bar-chart-card { max-width: 560px; }
+}
+
+/* ── Mobile (≤720px) ── */
+@media (max-width: 720px) {
+  .wrap { padding: 0 18px; }
+
+  /* Hero */
+  .hero { padding-top: 88px; padding-bottom: 44px; }
+  .hero h1 br { display: none; }
+  .hero-ctas { flex-direction: column; align-items: stretch; }
+  .hero-ctas .btn { justify-content: center; text-align: center; }
+  .hero-proof { gap: 16px; flex-wrap: wrap; }
+  .diag-card { max-width: 100%; }
+  .diag-leaf { height: 150px; }
+
+  /* Problem */
+  .problem { padding: 48px 0; }
+  .problem-head { margin-bottom: 32px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card { padding: 16px 14px; }
+  .stat-val { font-size: clamp(22px, 6vw, 34px); }
+
+  /* Como funciona */
+  .how { padding: 48px 0; }
+  .how-grid { grid-template-columns: 1fr; gap: 14px; }
+  .how-grid::before { display: none; }
+  .how-step { padding: 20px 18px; }
+
+  /* IA section */
+  .ia-section { padding: 48px 0; }
+  .ia-flow { grid-template-columns: 1fr 1fr; row-gap: 24px; column-gap: 14px; }
+  .ia-disclaimer { flex-direction: column; padding: 18px; gap: 14px; }
+  .ia-disclaimer h3 { font-size: 15px; }
+  .ia-disclaimer p { font-size: 14px; }
+  .section-head { margin-bottom: 32px; }
+  .section-head h2 br { display: none; }
+
+  /* Módulos */
+  .modules { padding: 48px 0; }
+  .modules-grid { gap: 14px; }
+
+  /* Comparativo */
+  .compare { padding: 48px 0; }
+
+  /* Tração */
+  .traction { padding: 48px 0; }
+  .traction-nums { gap: 16px; flex-wrap: wrap; }
+  .traction-num .n { font-size: 22px; }
+  .bar-chart { height: 150px; gap: 8px; }
+  .bar-rec { font-size: 10px; }
+  .bar-year { font-size: 11px; }
+  .bar-clients { font-size: 9px; }
+  .bar-chart-label { font-size: 12px; }
+
+  /* CTA */
+  .cta-section { padding: 48px 0; }
+  .cta-card { padding: 28px 20px; }
+  .cta-btns { flex-direction: column; align-items: stretch; }
+  .cta-btns .btn { justify-content: center; }
+  .cta-trust { gap: 10px; font-size: 12px; }
+
+  /* Footer */
+  .foot-grid { grid-template-columns: 1fr 1fr; gap: 22px; }
+  .foot-grid .foot-brand { grid-column: 1 / -1; }
+  .foot-bottom { flex-direction: column; gap: 6px; text-align: center; }
+}
+
+/* ── Mobile pequeno (≤440px) ── */
+@media (max-width: 440px) {
+  .wrap { padding: 0 14px; }
+
+  /* Stats: 1 coluna */
+  .stats-grid { grid-template-columns: 1fr; }
+
+  /* IA flow: 1 coluna */
+  .ia-flow { grid-template-columns: 1fr; }
+
+  /* Footer: 1 coluna */
+  .foot-grid { grid-template-columns: 1fr; }
+  .foot-grid .foot-brand { grid-column: 1; }
+
+  /* Barra: scroll horizontal se não couber */
+  .bar-chart-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .bar-chart { min-width: 260px; }
+
+  /* Tração números: coluna */
+  .traction-nums { flex-direction: column; gap: 12px; }
+
+  /* Proof */
+  .hero-proof { gap: 12px; }
+  .proof-num { font-size: 19px; }
+
+  /* Módulos */
+  .mod-card { padding: 18px 16px; }
+  .mod-cta-tile { padding: 20px 18px; }
+}
+
+/* ── Hover só em dispositivos com ponteiro ── */
+@media (hover: hover) and (pointer: fine) {
+  .mod-card:hover { transform: translateY(-5px); box-shadow: var(--sh); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-terra:hover { transform: translateY(-2px); }
+  .btn-ghost:hover { transform: none; }
+}
+
+/* ── Touch: sem hover transform ── */
+@media (hover: none) {
+  .mod-card { transition: box-shadow .2s; }
+  .btn:active { transform: scale(.97); transition: transform .12s; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAV
+============================================================ -->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="#topo" class="nav-logo">
+        <div class="nav-logo-mark">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 17V7" stroke="#FBF5E8" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M10 8.5C10 3.5 5.5 1 5.5 1C5.5 6 8.5 8.5 10 8.5Z" fill="#69A24A"/>
+            <path d="M10 6C10 1 14.5 1 14.5 1C14.5 5.5 12 7.5 10 6Z" fill="#E0A23C"/>
+            <circle cx="10" cy="18.5" r="1.8" fill="#FBF5E8"/>
+          </svg>
+        </div>
+        <span class="nav-logo-text">Safra<span>Viva</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#como-funciona">Como funciona</a>
+        <a href="#ia">Diagnóstico IA</a>
+        <a href="#modulos">Recursos</a>
+        <a href="#diferenciais">Diferenciais</a>
+      </nav>
+      <div class="nav-ctas" style="display:flex;gap:10px">
+        <a href="#contato" class="btn btn-ghost btn-sm">Falar com a equipe</a>
+        <a href="#contato" class="btn btn-primary btn-sm">Quero conhecer</a>
+      </div>
+      <button class="nav-burger" id="nav-burger" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+          <path id="burger-icon" d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="#como-funciona" class="nav-mobile-link">Como funciona</a>
+    <a href="#ia" class="nav-mobile-link">Diagnóstico IA</a>
+    <a href="#modulos" class="nav-mobile-link">Recursos</a>
+    <a href="#diferenciais" class="nav-mobile-link">Diferenciais</a>
+    <a href="#contato" class="btn btn-primary">Quero conhecer</a>
+  </div>
+</header>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero" id="topo">
+  <div class="hero-deco"></div>
+  <div class="wrap">
+    <div class="hero-grid">
+
+      <div class="hero-copy">
+        <div class="hero-badge reveal">
+          <span class="hero-badge-dot"></span>
+          Agricultura + Inteligência Artificial
+        </div>
+        <h1 class="reveal" style="transition-delay:.07s">
+          A inteligência que<br>
+          protege sua <span class="hl">lavoura
+            <svg viewBox="0 0 220 14" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M2 10 Q 55 3 110 8 T 218 7" stroke="currentColor" stroke-width="3.5" fill="none" stroke-linecap="round" opacity=".45"/>
+            </svg>
+          </span><br>
+          antes do problema.
+        </h1>
+        <p class="hero-sub reveal" style="transition-delay:.14s">
+          Tire uma foto da planta com sintomas — a IA identifica a doença, explica o que é em linguagem simples e conecta você ao especialista certo. Mais financeiro inteligente, rede de produtores e muito mais.
+        </p>
+        <div class="hero-ctas reveal" style="transition-delay:.2s">
+          <a href="#contato" class="btn btn-primary btn-lg">
+            Quero conhecer
+            <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><path d="M3.5 8.5h10M9.5 4.5l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#como-funciona" class="btn btn-ghost btn-lg">Como funciona</a>
+        </div>
+        <div class="hero-proof reveal" style="transition-delay:.26s">
+          <div>
+            <div class="proof-num">7</div>
+            <div class="proof-label">módulos integrados num só app</div>
+          </div>
+          <div>
+            <div class="proof-num">6</div>
+            <div class="proof-label">agentes de IA especializados</div>
+          </div>
+          <div>
+            <div class="proof-num">60 dias</div>
+            <div class="proof-label">de antecedência nos alertas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnosis card interactive -->
+      <div class="hero-visual reveal" style="transition-delay:.18s">
+        <div class="diag-wrap">
+          <div class="diag-card" id="diag-card">
+            <div class="diag-header">
+              <div class="diag-hicon">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none">
+                  <path d="M8.5 2C5 2 2 5 2 8.5S5 15 8.5 15 15 12 15 8.5 12 2 8.5 2Z" stroke="currentColor" stroke-width="1.8" fill="none"/>
+                  <path d="M6 7.5C6 5.5 7 4 8.5 3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  <circle cx="8.5" cy="10.5" r="1" fill="currentColor"/>
+                </svg>
+              </div>
+              <div>
+                <div class="diag-htitle">SafraViva Diagnóstico</div>
+                <div class="diag-hsub"><span class="dot-live"></span> Análise por IA ativa</div>
+              </div>
+            </div>
+
+            <div class="diag-leaf">
+              <!-- Leaf SVG -->
+              <svg class="diag-leaf-svg" width="120" height="130" viewBox="0 0 120 130" fill="none">
+                <path d="M60 10 C30 20 15 50 18 85 C20 108 38 122 60 124 C82 122 100 108 102 85 C105 50 90 20 60 10Z" fill="#69A24A" opacity=".25"/>
+                <path d="M60 10 C50 30 48 60 50 90 C52 108 56 120 60 124" stroke="#2E5A38" stroke-width="1.5" fill="none" opacity=".35"/>
+                <path d="M50 55 C40 50 32 42 28 35" stroke="#2E5A38" stroke-width="1" fill="none" opacity=".3" stroke-linecap="round"/>
+                <path d="M58 70 C46 66 37 58 33 50" stroke="#2E5A38" stroke-width="1" fill="none" opacity=".3" stroke-linecap="round"/>
+                <path d="M70 55 C80 50 88 42 92 35" stroke="#2E5A38" stroke-width="1" fill="none" opacity=".3" stroke-linecap="round"/>
+                <path d="M62 70 C74 66 83 58 87 50" stroke="#2E5A38" stroke-width="1" fill="none" opacity=".3" stroke-linecap="round"/>
+                <!-- disease spots (hidden until result) -->
+                <circle id="spot1" cx="42" cy="48" r="5" fill="#BE4A2E" opacity="0"/>
+                <circle id="spot2" cx="75" cy="62" r="4" fill="#BE4A2E" opacity="0"/>
+                <circle id="spot3" cx="55" cy="80" r="3.5" fill="#BE4A2E" opacity="0"/>
+              </svg>
+              <div class="scan-line" id="scan-line"></div>
+              <div class="diag-corner dc-tl"></div>
+              <div class="diag-corner dc-tr"></div>
+              <div class="diag-corner dc-bl"></div>
+              <div class="diag-corner dc-br"></div>
+              <div class="diag-hint" id="diag-hint">Clique para ver diagnóstico</div>
+            </div>
+
+            <div class="diag-body" id="diag-body">
+              <!-- IDLE -->
+              <div id="state-idle">
+                <button class="btn btn-primary" style="width:100%;justify-content:center;gap:8px" id="btn-diagnose">
+                  <svg width="17" height="17" viewBox="0 0 17 17" fill="none"><circle cx="8.5" cy="8.5" r="6.5" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 5v4l2.5 1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  Analisar foto da lavoura
+                </button>
+              </div>
+              <!-- SCANNING -->
+              <div id="state-scanning" style="display:none">
+                <div class="diag-scanning">
+                  <div class="spinner"></div>
+                  Comparando com 8.400 casos da sua região…
+                </div>
+              </div>
+              <!-- RESULT -->
+              <div id="state-result" style="display:none">
+                <div class="diag-disease">
+                  <div class="diag-disease-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3l1.5 4.5H16l-3.7 2.7 1.4 4.3L10 12l-3.7 2.5 1.4-4.3L4 7.5h4.5L10 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="none"/></svg>
+                  </div>
+                  <div style="flex:1;min-width:0">
+                    <div class="diag-disease-name">Ferrugem Asiática</div>
+                    <div class="diag-disease-sub">Confiança 94% · adaptado à sua região</div>
+                  </div>
+                  <div class="diag-badge">Grave</div>
+                </div>
+                <div class="diag-explain">
+                  <strong style="color:var(--ink)">O que é:</strong> fungo que se espalha pelas folhas da soja formando manchas alaranjadas. Se não tratado, pode causar queda precoce das folhas e redução severa da produção.
+                </div>
+                <div class="diag-region">
+                  <svg style="flex-shrink:0;margin-top:1px" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1C4.2 1 2 3.2 2 6c0 3.8 5 8 5 8s5-4.2 5-8c0-2.8-2.2-5-5-5Z" stroke="var(--green)" stroke-width="1.5" fill="none"/><circle cx="7" cy="6" r="1.5" fill="var(--green)"/></svg>
+                  <span><strong style="color:var(--green-deep)">Na sua região:</strong> Tebuconazol e Azoxistrobina são os produtos mais utilizados pelos produtores com bons resultados.</span>
+                </div>
+                <div class="diag-consult">
+                  <svg style="flex-shrink:0;margin-top:1px" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1.5a6 6 0 100 12 6 6 0 000-12Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M7.5 7v4M7.5 4.5v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                  <span>Antes de aplicar qualquer produto, fale com o seu agrônomo ou consultor responsável para definir doses e momento certo de aplicação.</span>
+                </div>
+                <div class="diag-action">
+                  <button class="diag-btn-primary" style="background:var(--green);color:var(--on-green);border-radius:var(--r-sm);cursor:pointer">Falar com consultor</button>
+                  <button class="diag-btn-ghost" style="border:1.5px solid var(--line-2);border-radius:var(--r-sm);color:var(--muted);background:transparent;cursor:pointer" id="btn-reset">Nova foto</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- floating chips -->
+          <div class="float-chip" style="position:absolute;top:52px;left:-44px;animation:floaty 5s ease-in-out infinite;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:9px 12px;box-shadow:var(--sh-lg);display:flex;align-items:center;gap:8px;z-index:2">
+            <div style="width:28px;height:28px;border-radius:8px;background:var(--danger-tint);display:grid;place-items:center;flex-shrink:0">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1.5l5.5 10h-11L7 1.5Z" stroke="var(--danger)" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M7 6v3M7 10.5v.3" stroke="var(--danger)" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+              <div style="font-size:11.5px;font-weight:700">Caixa em 45 dias</div>
+              <div style="font-size:10.5px;color:var(--muted)">Aja agora →</div>
+            </div>
+          </div>
+
+          <div class="float-chip" style="position:absolute;bottom:72px;right:-40px;animation:floaty 5.6s ease-in-out .6s infinite;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:9px 12px;box-shadow:var(--sh-lg);display:flex;align-items:center;gap:8px;z-index:2">
+            <div style="width:28px;height:28px;border-radius:8px;background:var(--green-tint);display:grid;place-items:center;flex-shrink:0">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1C4 3 2 5.5 4 8.5C5.5 11 7 12.5 7 12.5S8.5 11 10 8.5C12 5.5 10 3 7 1Z" stroke="var(--green)" stroke-width="1.5" fill="none"/></svg>
+            </div>
+            <div>
+              <div style="font-size:11.5px;font-weight:700">Cura 78%</div>
+              <div style="font-size:10.5px;color:var(--muted)">Talhão 5 · em dia</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     PROBLEM
+============================================================ -->
+<section class="problem">
+  <div class="wrap">
+    <div class="problem-head">
+      <span class="prob-kicker reveal">O paradoxo do agro</span>
+      <h2 class="reveal" style="transition-delay:.07s">O produtor brasileiro nunca<br>colheu tanto. E nunca faliu tanto.</h2>
+      <p class="reveal" style="transition-delay:.14s">
+        Os pedidos de recuperação judicial no campo dispararam. O produtor descobre o problema — na lavoura e no dinheiro — quando já é tarde. O SafraViva inverte isso: avisa antes.
+      </p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card reveal">
+        <div class="stat-val">+61,8%</div>
+        <div class="stat-lbl">de aumento nos pedidos de recuperação judicial no agro em 2024</div>
+        <div class="stat-src">2.273 pedidos registrados</div>
+      </div>
+      <div class="stat-card reveal" style="transition-delay:.08s">
+        <div class="stat-val">2–3 dias</div>
+        <div class="stat-lbl">economizados por diagnóstico que antes levava dias para chegar</div>
+        <div class="stat-src">por talhão analisado</div>
+      </div>
+      <div class="stat-card reveal" style="transition-delay:.16s">
+        <div class="stat-val">20–30%</div>
+        <div class="stat-lbl">a mais de eficácia com recomendação adaptada à sua região</div>
+        <div class="stat-src">vs. orientação genérica</div>
+      </div>
+      <div class="stat-card reveal" style="transition-delay:.24s">
+        <div class="stat-val">R$ 25,8 mi</div>
+        <div class="stat-lbl">de faturamento projetado no Ano 5 — 61% da líder atual do setor</div>
+        <div class="stat-src">projeção base conservadora</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMO FUNCIONA
+============================================================ -->
+<section class="how" id="como-funciona">
+  <div class="wrap">
+    <div class="section-head center">
+      <h2 class="reveal">Como o SafraViva funciona<br>na prática</h2>
+      <p class="reveal" style="transition-delay:.08s">Três etapas simples que transformam sua forma de cuidar da lavoura — do celular ao computador.</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-step reveal">
+        <div class="how-icon s1">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect x="6" y="7" width="14" height="12" rx="2" stroke="var(--green)" stroke-width="1.8" fill="none"/>
+            <circle cx="13" cy="13" r="3" stroke="var(--green)" stroke-width="1.6" fill="none"/>
+            <path d="M11 7V5.5a2 2 0 014 0V7" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Fotografe o problema</h3>
+        <p>Viu algo estranho na planta ou nas folhas? Tire uma foto com o celular. O SafraViva recebe a imagem e começa a análise na hora, sem precisar de internet de alta velocidade.</p>
+      </div>
+      <div class="how-step reveal" style="transition-delay:.09s">
+        <div class="how-icon s2">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="8" stroke="var(--terra)" stroke-width="1.8" fill="none"/>
+            <path d="M9 13l3 3 5-5" stroke="var(--terra)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>A IA diagnostica e explica</h3>
+        <p>O sistema identifica a doença, fungo ou praga — e explica em linguagem simples o que é, qual o risco e quais produtos são comuns na sua região. Sem jargão técnico desnecessário.</p>
+      </div>
+      <div class="how-step reveal" style="transition-delay:.18s">
+        <div class="how-icon s3">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="10" cy="10" r="4" stroke="var(--info)" stroke-width="1.8" fill="none"/>
+            <circle cx="18" cy="16" r="4" stroke="var(--info)" stroke-width="1.8" fill="none"/>
+            <path d="M14 10.5L18 12" stroke="var(--info)" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Consulte antes de agir</h3>
+        <p>Antes de aplicar qualquer produto, o SafraViva conecta você ao seu agrônomo ou consultor técnico. A IA apoia a decisão — mas a dosagem e a aplicação ficam sempre com o profissional responsável.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     IA DIAGNÓSTICO
+============================================================ -->
+<section class="ia-section" id="ia">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="reveal">Uma IA que explica —<br>não só diagnostica</h2>
+      <p class="reveal" style="transition-delay:.08s">Saber o nome da doença não basta. O SafraViva explica o que ela é, usa a sua localização para mostrar o que funciona na sua região e, sempre, indica um profissional antes de qualquer dose.</p>
+    </div>
+
+    <div class="ia-flow">
+      <div class="ia-step s1 reveal">
+        <div class="ia-icon">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <rect x="7" y="8" width="12" height="10" rx="2" stroke="var(--green)" stroke-width="1.8" fill="none"/>
+            <circle cx="13" cy="13" r="2.8" stroke="var(--green)" stroke-width="1.5" fill="none"/>
+            <path d="M11 8V6.5a2 2 0 014 0V8" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h4>Tire uma foto</h4>
+        <p>Fotografe a folha, raiz ou planta com sintomas visíveis</p>
+      </div>
+      <div class="ia-step s2 reveal" style="transition-delay:.07s">
+        <div class="ia-icon">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="8" stroke="var(--terra)" stroke-width="1.6" fill="none" stroke-dasharray="3 2"/>
+            <path d="M10 13l2.5 2.5 4-4" stroke="var(--terra)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h4>IA identifica</h4>
+        <p>O sistema reconhece a doença, fungo ou bactéria com alta precisão</p>
+      </div>
+      <div class="ia-step s3 reveal" style="transition-delay:.14s">
+        <div class="ia-icon">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <path d="M7 9h12M7 13h8M7 17h6" stroke="var(--terra-deep)" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h4>Explicação simples</h4>
+        <p>O que é a doença, como se espalha e qual o risco — em linguagem acessível</p>
+      </div>
+      <div class="ia-step s4 reveal" style="transition-delay:.21s">
+        <div class="ia-icon">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <path d="M13 5C9.1 5 6 8.1 6 12c0 5.3 7 11 7 11s7-5.7 7-11c0-3.9-3.1-7-7-7Z" stroke="var(--green)" stroke-width="1.7" fill="none"/>
+            <circle cx="13" cy="12" r="2.5" fill="var(--green)" opacity=".5"/>
+          </svg>
+        </div>
+        <h4>Sugestões regionais</h4>
+        <p>Com sua geolocalização, mostra os tratamentos usados com sucesso na sua região</p>
+      </div>
+      <div class="ia-step s5 reveal" style="transition-delay:.28s">
+        <div class="ia-icon">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="9" r="3.5" stroke="var(--info)" stroke-width="1.7" fill="none"/>
+            <path d="M7 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="var(--info)" stroke-width="1.7" stroke-linecap="round" fill="none"/>
+            <path d="M18 14l1.5 1.5L22 13" stroke="var(--info)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h4>Consulte o profissional</h4>
+        <p>Antes de qualquer dose, o app conecta com seu agrônomo ou consultor</p>
+      </div>
+    </div>
+
+    <div class="ia-disclaimer reveal" style="transition-delay:.1s">
+      <div class="ia-disclaimer-icon">
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M13 3l9 16H4L13 3Z" stroke="var(--info)" stroke-width="1.8" stroke-linejoin="round" fill="none"/>
+          <path d="M13 11v5M13 18.5v.5" stroke="var(--info)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <h3>Antes de aplicar qualquer produto: fale com o responsável pela sua lavoura</h3>
+        <p>
+          O SafraViva identifica a doença, explica o que é e mostra os produtos mais usados na sua região. <strong>Mas a definição de doses (ml, kg, litros) e o momento certo de aplicação precisam sempre ser orientados pelo seu agrônomo, biólogo ou consultor técnico responsável.</strong> A inteligência artificial é um apoio — a decisão final é do profissional que conhece a sua lavoura de perto.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     MÓDULOS
+============================================================ -->
+<section class="modules" id="modulos">
+  <div class="wrap">
+    <div class="section-head center">
+      <h2 class="reveal">Tudo que a fazenda precisa,<br>conectado num só app</h2>
+      <p class="reveal" style="transition-delay:.08s">Cada módulo conversa com os outros e com a IA — da saúde da folha até o crédito no banco.</p>
+    </div>
+
+    <div class="modules-grid">
+
+      <!-- Módulo 1 -->
+      <div class="mod-card reveal">
+        <div class="mod-deco" style="background:var(--green-tint)"></div>
+        <div class="mod-top">
+          <div class="mod-icon" style="background:var(--green-tint)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2C8 4 5 7 7 12C8.5 16 12 19 12 19S15.5 16 17 12C19 7 16 4 12 2Z" stroke="var(--green)" stroke-width="1.8" fill="none" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="mod-tag" style="color:var(--green)">Diagnóstico por imagem</div>
+        <h3>Saúde da Lavoura + IA</h3>
+        <p>Foto da folha → a IA identifica a doença, explica o que é e mostra a cura evoluindo dia a dia.</p>
+        <ul class="mod-bullets">
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Diagnóstico adaptado ao solo e clima da sua região</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Gráfico de progresso de cura: % tratado / % restante</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Alerta de manejo antes de perder o tratamento</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Scanner do código QR nos sacos de insumo</li>
+        </ul>
+      </div>
+
+      <!-- Módulo 2 -->
+      <div class="mod-card reveal" style="transition-delay:.07s">
+        <div class="mod-deco" style="background:var(--terra-tint)"></div>
+        <div class="mod-top">
+          <div class="mod-icon" style="background:var(--terra-tint)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="4" y="6" width="16" height="12" rx="2" stroke="var(--terra)" stroke-width="1.8" fill="none"/><path d="M4 10h16" stroke="var(--terra)" stroke-width="1.5"/><path d="M8 14h4" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <div class="mod-tag" style="color:var(--terra-deep)">Diferencial radical</div>
+        <h3>Financeiro Inteligente</h3>
+        <p>Avisa 60 dias antes que vai faltar dinheiro no caixa — e já sugere o que fazer para evitar o problema.</p>
+        <ul class="mod-bullets">
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Alerta de inadimplência 60 dias antes com plano de ação</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Lucro por talhão em tempo real</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Simulador "e se…": projeta custo e produtividade</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Relatório para banco gerado em 1 clique</li>
+        </ul>
+      </div>
+
+      <!-- Módulo 3 -->
+      <div class="mod-card reveal" style="transition-delay:.14s">
+        <div class="mod-deco" style="background:var(--info-tint)"></div>
+        <div class="mod-top">
+          <div class="mod-icon" style="background:var(--info-tint)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.5 4.5H18l-3.7 2.7 1.4 4.3L12 12l-3.7 2.5 1.4-4.3L6 7.5h4.5L12 3Z" stroke="var(--info)" stroke-width="1.7" stroke-linejoin="round" fill="none"/></svg>
+          </div>
+        </div>
+        <div class="mod-tag" style="color:var(--info)">Economia de juros</div>
+        <h3>Crédito e Proteção</h3>
+        <p>Compara linhas de crédito rural e simula seguro agrícola — sem depender do gerente do banco.</p>
+        <ul class="mod-bullets">
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--info)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Comparador de taxas: Pronaf, Pronamp e outras linhas</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--info)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Simulador de seguro rural por cultura e área</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--info)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Alerta de calamidade pública para renegociar dívida</li>
+        </ul>
+      </div>
+
+      <!-- Módulo 4 -->
+      <div class="mod-card reveal">
+        <div class="mod-deco" style="background:color-mix(in srgb,var(--gold) 20%,var(--surface))"></div>
+        <div class="mod-top">
+          <div class="mod-icon" style="background:color-mix(in srgb,var(--gold) 18%,var(--surface))">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 17l4-8 4 5 3-3 3 6" stroke="var(--terra-deep)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          </div>
+        </div>
+        <div class="mod-tag" style="color:var(--terra-deep)">Quando e para quem vender</div>
+        <h3>Comercialização</h3>
+        <p>A IA indica a hora certa de vender e quem paga mais na sua região, baseado em preço, câmbio e safra global.</p>
+        <ul class="mod-bullets">
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Recomendação do melhor momento de venda</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Comparador de preço por comprador e cooperativa</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Contrato eletrônico + previsão por satélite</li>
+        </ul>
+      </div>
+
+      <!-- Módulo 5 -->
+      <div class="mod-card reveal" style="transition-delay:.07s">
+        <div class="mod-deco" style="background:var(--green-tint)"></div>
+        <div class="mod-top">
+          <div class="mod-icon" style="background:var(--green-tint)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="9" cy="9" r="3" stroke="var(--green)" stroke-width="1.7" fill="none"/><circle cx="17" cy="14" r="2.5" stroke="var(--green)" stroke-width="1.7" fill="none"/><path d="M4 19c0-2.8 2.2-5 5-5 1.2 0 2.3.4 3.1 1.1M14 19c0-1.7 1.3-3 3-3" stroke="var(--green)" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg>
+          </div>
+        </div>
+        <div class="mod-tag" style="color:var(--green)">Diferencial radical</div>
+        <h3>Comunidade de Produtores</h3>
+        <p>O que funcionou na lavoura do vizinho — com resultado real comprovado, não só teoria.</p>
+        <ul class="mod-bullets">
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Feed "o que funcionou aqui" por cultura e região</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Comparativo anônimo de produtividade com vizinhos</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Mentoria e troca direta entre produtores</li>
+        </ul>
+      </div>
+
+      <!-- Módulo 6 -->
+      <div class="mod-card reveal" style="transition-delay:.14s">
+        <div class="mod-deco" style="background:var(--terra-tint)"></div>
+        <div class="mod-top">
+          <div class="mod-icon" style="background:var(--terra-tint)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.3 4H17l-3.2 2.3 1.2 3.7L12 11l-3 2 1.2-3.7L7 7h3.7L12 3Z" stroke="var(--terra)" stroke-width="1.7" stroke-linejoin="round" fill="none"/><path d="M8 18h8M9 21h6" stroke="var(--terra)" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <div class="mod-tag" style="color:var(--terra-deep)">Ultra-especializado</div>
+        <h3>Assistente por IA</h3>
+        <p>6 agentes que conhecem o SEU solo, clima e talhão — não respostas genéricas tiradas de qualquer lugar.</p>
+        <ul class="mod-bullets">
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Agentes especializados: Solo, Clima, Doença, Financeiro, Venda e Legal</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Contexto da sua fazenda e região sempre considerado</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--terra)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Recomendação localizada, com produto e momento certos</li>
+        </ul>
+      </div>
+
+      <!-- Módulo 7 -->
+      <div class="mod-card reveal">
+        <div class="mod-deco" style="background:var(--info-tint)"></div>
+        <div class="mod-top">
+          <div class="mod-icon" style="background:var(--info-tint)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4z" stroke="var(--info)" stroke-width="1.7" stroke-linejoin="round" fill="none"/><path d="M16.5 16.5m-3.5 0a3.5 3.5 0 107 0 3.5 3.5 0 00-7 0" stroke="var(--info)" stroke-width="1.7" fill="none"/></svg>
+          </div>
+        </div>
+        <div class="mod-tag" style="color:var(--info)">Sistema bilateral</div>
+        <h3>Consultoria Conectada</h3>
+        <p>O consultor gerencia dezenas de clientes em um painel único — e cada conversa fica registrada no talhão certo.</p>
+        <ul class="mod-bullets">
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--info)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Painel único: todos os clientes, talhões e histórico</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--info)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Chat técnico registrado no talhão — nada se perde</li>
+          <li class="mod-bullet"><svg class="bullet-check" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--info)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Relatório de eficácia para o consultor comprovar resultado</li>
+        </ul>
+      </div>
+
+      <!-- CTA tile -->
+      <div class="mod-cta-tile reveal" style="transition-delay:.07s">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="10" fill="color-mix(in srgb,var(--on-green) 12%,transparent)"/>
+          <path d="M20 8C16 10 13 13.5 15 18C16.5 22 20 25 20 25S23.5 22 25 18C27 13.5 24 10 20 8Z" stroke="var(--on-green)" stroke-width="1.8" fill="none"/>
+          <circle cx="20" cy="28" r="2.5" fill="var(--gold)"/>
+        </svg>
+        <h3>Um oceano azul no agro</h3>
+        <p>20+ funcionalidades que nenhum concorrente reúne em um só lugar. Começa focado, escala com você.</p>
+        <a href="#contato" class="btn" style="background:var(--on-green);color:var(--green-deep);align-self:flex-start;margin-top:auto">
+          Quero conhecer
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     COMPARATIVO
+============================================================ -->
+<section class="compare" id="diferenciais">
+  <div class="wrap">
+    <div class="section-head center">
+      <h2 class="reveal">O que só o SafraViva entrega</h2>
+      <p class="reveal" style="transition-delay:.08s">Plantix diagnostica, mas é genérico. Aegro gerencia, mas é reativo. FieldView é caro. Nós unimos tudo — e avisamos antes.</p>
+    </div>
+    <div class="card reveal" style="overflow:hidden;padding:0">
+      <div class="compare-table-wrap">
+        <table class="compare-table">
+          <thead>
+            <tr style="background:var(--surface-2)">
+              <th>Funcionalidade</th>
+              <th class="us">SafraViva</th>
+              <th>Plantix</th>
+              <th>Aegro</th>
+              <th>FieldView</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Diagnóstico por foto com explicação em linguagem simples</td><td class="us-col"><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-partial"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6h6" stroke="#3a2a08" stroke-width="1.8" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td></tr>
+            <tr><td>Recomendação adaptada ao solo e clima da sua região</td><td class="us-col"><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td></tr>
+            <tr><td>Alerta de problemas financeiros 60 dias antes</td><td class="us-col"><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td></tr>
+            <tr><td>Lucro por talhão em tempo real</td><td class="us-col"><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-partial"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6h6" stroke="#3a2a08" stroke-width="1.8" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td></tr>
+            <tr><td>Recomendação de quando vender a produção</td><td class="us-col"><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-partial"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6h6" stroke="#3a2a08" stroke-width="1.8" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td></tr>
+            <tr><td>Comunidade de produtores integrada</td><td class="us-col"><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td></tr>
+            <tr><td>Conexão produtor ↔ consultor no mesmo app</td><td class="us-col"><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td></tr>
+            <tr><td>Funciona offline (sem internet)</td><td class="us-col"><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-partial"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 6h6" stroke="#3a2a08" stroke-width="1.8" stroke-linecap="round"/></svg></span></td><td><span class="sym-yes"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></td><td><span class="sym-no"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M3 3l6 6M9 3l-6 6" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round"/></svg></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="compare-legend reveal" style="transition-delay:.1s">
+      <span><span class="sym-yes" style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--green)"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6l2.5 2.5 4.5-4.5" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Tem completo</span>
+      <span><span class="sym-partial" style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--gold)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5h6" stroke="#3a2a08" stroke-width="1.6" stroke-linecap="round"/></svg></span> Parcial</span>
+      <span><span class="sym-no" style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--surface-3)"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5" stroke="var(--muted)" stroke-width="1.4" stroke-linecap="round"/></svg></span> Não tem</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     TRAÇÃO
+============================================================ -->
+<section class="traction" id="tracao">
+  <div class="wrap">
+    <div class="traction-grid">
+      <div>
+        <span class="prob-kicker reveal">Projeção realista</span>
+        <h2 class="reveal" style="transition-delay:.07s">R$ 25,8 milhões<br>em 5 anos</h2>
+        <p class="reveal" style="transition-delay:.14s;font-size:16px;color:color-mix(in srgb,var(--on-green) 72%,transparent);margin-top:16px;max-width:420px;line-height:1.55">
+          Começando focado em Minas Gerais — com validação presencial e custo de aquisição próximo de zero. Em 5 anos, <strong style="color:var(--on-green)">61% do faturamento da líder atual do setor</strong>.
+        </p>
+        <div class="traction-nums reveal" style="transition-delay:.21s">
+          <div class="traction-num"><div class="n">3.000</div><div class="l">produtores no Ano 5</div></div>
+          <div class="traction-num"><div class="n">300</div><div class="l">consultores na rede</div></div>
+          <div class="traction-num"><div class="n">R$ 450</div><div class="l">ticket médio por mês</div></div>
+        </div>
+      </div>
+      <div class="bar-chart-card reveal" style="transition-delay:.12s">
+        <div class="bar-chart-label">Faturamento anual projetado</div>
+        <div class="bar-chart">
+          <div class="bar-item">
+            <div class="bar-rec">R$ 538 mil</div>
+            <div class="bar-fill" style="height:14%;background:color-mix(in srgb,var(--green-soft) 75%,transparent);animation-delay:.05s"></div>
+            <div class="bar-year">Ano 1</div>
+            <div class="bar-clients">150 prod.</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-rec">R$ 1,8 mi</div>
+            <div class="bar-fill" style="height:30%;background:color-mix(in srgb,var(--green-soft) 80%,transparent);animation-delay:.17s"></div>
+            <div class="bar-year">Ano 2</div>
+            <div class="bar-clients">500 prod.</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-rec">R$ 5,7 mi</div>
+            <div class="bar-fill" style="height:54%;background:color-mix(in srgb,var(--green-soft) 85%,transparent);animation-delay:.29s"></div>
+            <div class="bar-year">Ano 3</div>
+            <div class="bar-clients">1.200 prod.</div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-rec">R$ 25,8 mi</div>
+            <div class="bar-fill" style="height:100%;background:var(--gold);animation-delay:.41s"></div>
+            <div class="bar-year">Ano 5</div>
+            <div class="bar-clients">3.000 prod.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CTA
+============================================================ -->
+<section class="cta-section" id="contato">
+  <div class="wrap">
+    <div class="cta-card reveal">
+      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
+        <rect width="56" height="56" rx="14" fill="var(--green-tint)"/>
+        <path d="M28 12C22 15 18 19.5 20 26C21.5 31 28 35.5 28 35.5S34.5 31 36 26C38 19.5 34 15 28 12Z" stroke="var(--green)" stroke-width="2" fill="none"/>
+        <circle cx="28" cy="38" r="3" fill="var(--terra)"/>
+      </svg>
+      <h2>Pronto para uma safra<br>que avisa antes?</h2>
+      <p>Agende uma conversa com nossa equipe. Apresentamos o SafraViva de perto — sem compromisso e sem burocracia.</p>
+      <div class="cta-btns">
+        <a href="https://wa.me/5534999999999?text=Ol%C3%A1%2C%20quero%20conhecer%20o%20SafraViva" target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5C4.86 1.5 1.5 4.86 1.5 9c0 1.35.35 2.62.96 3.73L1.5 16.5l3.88-1.02A7.46 7.46 0 009 16.5c4.14 0 7.5-3.36 7.5-7.5S13.14 1.5 9 1.5Z" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M6.5 7.5c.5 1 1.5 2 2.5 2.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Falar pelo WhatsApp
+        </a>
+        <a href="mailto:contato@safraviva.com.br" class="btn btn-ghost btn-lg">Enviar e-mail</a>
+      </div>
+      <div class="cta-trust">
+        <span><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Sem cartão de crédito</span>
+        <span><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Demonstração presencial</span>
+        <span><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M3 8l3 3 6-6" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Funciona sem internet</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div style="display:flex;align-items:center;gap:9px">
+          <div style="width:34px;height:34px;background:color-mix(in srgb,var(--on-green) 12%,transparent);border-radius:9px;display:grid;place-items:center">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 17V7" stroke="var(--on-green)" stroke-width="2.2" stroke-linecap="round"/><path d="M10 8.5C10 3.5 5.5 1 5.5 1C5.5 6 8.5 8.5 10 8.5Z" fill="var(--green-soft)"/><path d="M10 6C10 1 14.5 1 14.5 1C14.5 5.5 12 7.5 10 6Z" fill="var(--gold)"/><circle cx="10" cy="18.5" r="1.8" fill="var(--on-green)"/></svg>
+          </div>
+          <span style="font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-0.03em">Safra<span style="color:var(--gold)">Viva</span></span>
+        </div>
+        <p>Inteligência viva para a sua lavoura. Feito em Minas Gerais para o produtor brasileiro.</p>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Produto</div>
+        <ul>
+          <li><a href="#modulos">Saúde da Lavoura</a></li>
+          <li><a href="#modulos">Financeiro Inteligente</a></li>
+          <li><a href="#modulos">Crédito e Proteção</a></li>
+          <li><a href="#modulos">Comercialização</a></li>
+          <li><a href="#modulos">Assistente por IA</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Para quem</div>
+        <ul>
+          <li><a href="#topo">Produtor rural</a></li>
+          <li><a href="#topo">Consultor agrônomo</a></li>
+          <li><a href="#topo">Cooperativas</a></li>
+          <li><a href="#topo">Investidores</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <div class="foot-col-title">Contato</div>
+        <ul>
+          <li><a href="mailto:contato@safraviva.com.br">contato@safraviva.com.br</a></li>
+          <li><a href="https://wa.me/5534999999999" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 SafraViva. Todos os direitos reservados.</span>
+      <span>Feito em Minas Gerais, Brasil</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JS
+============================================================ -->
+<script>
+  // Nav scroll state
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('solid', window.scrollY > 30);
+  }, { passive: true });
+
+  // Mobile nav
+  const burger = document.getElementById('nav-burger');
+  const mobileNav = document.getElementById('nav-mobile');
+  burger.addEventListener('click', () => {
+    mobileNav.classList.toggle('open');
+  });
+  mobileNav.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => mobileNav.classList.remove('open'));
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -6% 0px' });
+  reveals.forEach(el => io.observe(el));
+
+  // Diagnosis card interaction
+  const btnDiagnose = document.getElementById('btn-diagnose');
+  const stateIdle = document.getElementById('state-idle');
+  const stateScanning = document.getElementById('state-scanning');
+  const stateResult = document.getElementById('state-result');
+  const diagHint = document.getElementById('diag-hint');
+  const scanLine = document.getElementById('scan-line');
+  const spot1 = document.getElementById('spot1');
+  const spot2 = document.getElementById('spot2');
+  const spot3 = document.getElementById('spot3');
+  const btnReset = document.getElementById('btn-reset');
+
+  function showScanning() {
+    stateIdle.style.display = 'none';
+    stateScanning.style.display = 'block';
+    stateResult.style.display = 'none';
+    diagHint.textContent = 'Analisando…';
+    scanLine.style.animationPlayState = 'running';
+    setTimeout(showResult, 2400);
+  }
+
+  function showResult() {
+    stateScanning.style.display = 'none';
+    stateResult.style.display = 'flex';
+    stateResult.style.flexDirection = 'column';
+    diagHint.textContent = 'Diagnóstico pronto';
+    scanLine.style.animationPlayState = 'paused';
+    [spot1, spot2, spot3].forEach((s, i) => {
+      setTimeout(() => { s.style.transition = 'opacity .4s'; s.style.opacity = '.8'; }, i * 180);
+    });
+  }
+
+  function resetCard() {
+    stateIdle.style.display = 'block';
+    stateScanning.style.display = 'none';
+    stateResult.style.display = 'none';
+    diagHint.textContent = 'Clique para ver diagnóstico';
+    scanLine.style.animationPlayState = 'running';
+    [spot1, spot2, spot3].forEach(s => { s.style.opacity = '0'; });
+  }
+
+  btnDiagnose.addEventListener('click', showScanning);
+  btnReset.addEventListener('click', resetCard);
+</script>
+
+</body>
+</html>
