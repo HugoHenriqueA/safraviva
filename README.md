@@ -20,9 +20,7 @@ Landing page conceitual desenvolvida para o **SafraViva**, uma plataforma voltad
 
 1. Clone este repositório:
 
-```bash
-git clone [https://github.com/HugoHenriqueA/safraviva.git](https://github.com/HugoHenriqueA/safraviva.git)
-```
+git clone https://github.com/HugoHenriqueA/safraviva.git
 
 ## 📸 Preview
 
