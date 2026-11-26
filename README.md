@@ -19,6 +19,17 @@ Landing page conceitual desenvolvida para o **SafraViva**, uma plataforma voltad
 ## 🚀 Como executar o projeto
 
 1. Clone este repositório:
-   ```bash
-   git clone [https://github.com/HugoHenriqueA/safraviva.git](https://github.com/HugoHenriqueA/safraviva.git)
-   <img width="1917" height="925" alt="image" src="https://github.com/user-attachments/assets/565a1573-76bd-4d1d-bd03-fc2682170941" />
+
+```bash
+git clone [https://github.com/HugoHenriqueA/safraviva.git](https://github.com/HugoHenriqueA/safraviva.git)
+```
+
+## 📸 Preview
+
+<img width="1902" height="923" alt="image" src="https://github.com/user-attachments/assets/25baeb7a-b390-4203-a9bd-3565bd113a9f" />
+
+## 👤 Autor
+
+**Hugo Henrique Alves**  
+- GitHub: [@HugoHenriqueA](https://github.com/HugoHenriqueA)  
+- LinkedIn: [linkedin.com/in/hugo-henrique-alves](https://www.linkedin.com/in/hugo-henrique-alves/)
