@@ -16,12 +16,6 @@ Landing page conceitual desenvolvida para o **SafraViva**, uma plataforma voltad
 - **CSS3:** Variáveis CSS (Design Tokens), Flexbox, CSS Grid, animações (`@keyframes`), responsividade com `@media` queries e tipografia via Google Fonts (*Bricolage Grotesque* e *Hanken Grotesk*).
 - **JavaScript (Vanilla JS):** Manipulação do DOM, eventos de clique/rolagem e `IntersectionObserver`.
 
-## 🚀 Como executar o projeto
-
-1. Clone este repositório:
-
-git clone https://github.com/HugoHenriqueA/safraviva.git
-
 ## 📸 Preview
 
 <img width="1902" height="923" alt="image" src="https://github.com/user-attachments/assets/25baeb7a-b390-4203-a9bd-3565bd113a9f" />
